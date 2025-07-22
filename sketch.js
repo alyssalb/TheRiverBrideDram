@@ -30,7 +30,19 @@ function setup() {
     modelType: 'lite',
     solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands'
   };
-  detector = await handPoseDetection.createDetector(model, detectorConfig);
+	
+  async function setup() {
+  createCanvas(windowWidth, windowHeight);
+
+  const detectorConfig = {
+    runtime: 'tfjs',
+    modelType: 'lite',
+  };
+
+  detector = await handPoseDetection.createDetector(
+    handPoseDetection.SupportedModels.MediaPipeHands,
+    detectorConfig
+  );
 }
 
 function draw() {
