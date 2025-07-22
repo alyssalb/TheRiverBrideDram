@@ -5,6 +5,9 @@ let hands = [];
 let ripples = [];
 let riverMask = [];
 
+let lastRippleTime = 0;
+let rippleCooldown = 800;
+
 let phrases = [
   "The river remembers.",
   "What have you left behind?",
@@ -192,13 +195,14 @@ async function handLoop() {
       hands = results;
 
       if (hands.length > 0) {
-        const indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
+       let indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
         if (indexTip) {
           let x = indexTip.x;
           let y = indexTip.y;
 
-          if (isInRiver(x, y)) {
+          if (isInRiver(x, y) && millis() - lastRippleTime > rippleCooldown) {
             triggerRipple(x, y);
+            lastRippleTime = millis();
           }
         }
       }
