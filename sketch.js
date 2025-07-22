@@ -6,7 +6,7 @@ let ripples = [];
 let riverMask = [];
 
 let phrases = [
-	"The river remembers.",
+  "The river remembers.",
   "What have you left behind?",
   "The current always returns.",
   "Ask the dolphins, they know.",
@@ -15,8 +15,8 @@ let phrases = [
   "A name once spoken, lost downstream."
 ];
 
-
-function setup() {
+// ⬇️ make setup async
+async function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
 
@@ -30,28 +30,18 @@ function setup() {
     modelType: 'lite',
     solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands'
   };
-	
-  async function setup() {
-  createCanvas(windowWidth, windowHeight);
 
-  const detectorConfig = {
-    runtime: 'tfjs',
-    modelType: 'lite',
-  };
+  detector = await handPoseDetection.createDetector(model, detectorConfig);
 
-  detector = await handPoseDetection.createDetector(
-    handPoseDetection.SupportedModels.MediaPipeHands,
-    detectorConfig
-  );
+  handLoop(); // ⬅️ start the detection loop
 }
 
 function draw() {
   background(0);
-  await detectHands();
-	drawSunsetSky();
+  drawSunsetSky();
   drawRiver();
-	drawRiverTexture();
-	drawRipples();
+  drawRiverTexture();
+  drawRipples();
 }
 
 function drawSunsetSky() {
@@ -66,15 +56,15 @@ function drawSunsetSky() {
 function drawRiver() {
   fill('#2f5e4e');
   beginShape();
-	riverMask = [];
-	
+  riverMask = [];
+
   for (let y = 0; y <= height; y += 8) {
     let edgeEase = sin((y / height) * PI);
     let n = noise(y * 0.01, frameCount * 0.001);
     let waveOffset = sin(y * 0.01 + frameCount * 0.003 + n * TWO_PI) * (60 + n * 30 * edgeEase);
     let leftX = width / 2 + waveOffset - 200;
-		vertex(leftX, y); // left edge
-		riverMask.push({ y: y, left: leftX });
+    vertex(leftX, y);
+    riverMask.push({ y: y, left: leftX });
   }
 
   for (let i = riverMask.length - 1; i >= 0; i--) {
@@ -120,7 +110,7 @@ function drawRipples() {
     endShape();
     pop();
 
-    // Oracle phrase
+    // Text
     if (r.alpha > 0 && r.phrase) {
       push();
       fill(255, r.alpha);
@@ -138,7 +128,6 @@ function drawRipples() {
   ripples = ripples.filter(r => r.alpha > 0);
 }
 
-
 function triggerRipple(x, y) {
   ripples.push({
     x: x,
@@ -155,7 +144,6 @@ function triggerRipple(x, y) {
   });
 }
 
-
 function isInRiver(x, y) {
   let closest = riverMask.reduce((prev, curr) => {
     return abs(curr.y - y) < abs(prev.y - y) ? curr : prev;
@@ -168,45 +156,53 @@ function isInRiver(x, y) {
 }
 
 function drawRiverTexture() {
-	push();
-	blendMode(SOFT_LIGHT);
-	
-	stroke(255, 255, 255, 12);
-	strokeWeight(1);
-	for (let y = 0; y < height; y += 6) {
-		let waviness = sin(y * 0.02 + frameCount * 0.02) * 30;
-		let left = width / 2 - 200 + waviness;
-		let right = width / 2 + 200 + waviness;
-		line(left, y, right, y);
-	}
-	
-	noStroke();
-	for(let i = 0; i < 30; i++) {
-		let y = floor(random(height));
+  push();
+  blendMode(SOFT_LIGHT);
+
+  stroke(255, 255, 255, 12);
+  strokeWeight(1);
+  for (let y = 0; y < height; y += 6) {
+    let waviness = sin(y * 0.02 + frameCount * 0.02) * 30;
+    let left = width / 2 - 200 + waviness;
+    let right = width / 2 + 200 + waviness;
+    line(left, y, right, y);
+  }
+
+  noStroke();
+  for (let i = 0; i < 30; i++) {
+    let y = floor(random(height));
     if (riverMask[y] && riverMask[y].left !== undefined && riverMask[y].right !== undefined) {
       let x = random(riverMask[y].left, riverMask[y].right);
       fill(255, 255, 255, random(20, 60));
       ellipse(x, y, random(3, 7), random(1.5, 3));
     }
   }
-	pop();
+
+  pop();
 }
 
-async function detectHands() {
-  if (detector && video.loadedmetadata) {
-    hands = await detector.estimateHands(video.elt, { flipHorizontal: true});
+// ⬇️ async loop instead of `await` in draw
+async function handLoop() {
+  while (true) {
+    if (detector && video.loadedmetadata) {
+      const results = await detector.estimateHands(video.elt, {
+        flipHorizontal: true
+      });
 
-    if (hands.length > 0) {
-      let indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
-      if (indexTip) {
-        let x = indexTip.x;
-        let y = indexTip.y;
+      hands = results;
 
-        if (isInRiver(x, y)) {
-          triggerRipple(x, y);
+      if (hands.length > 0) {
+        const indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
+        if (indexTip) {
+          let x = indexTip.x;
+          let y = indexTip.y;
 
+          if (isInRiver(x, y)) {
+            triggerRipple(x, y);
+          }
         }
       }
     }
+    await new Promise(resolve => setTimeout(resolve, 100)); // limit loop speed
   }
 }
