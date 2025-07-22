@@ -2,6 +2,9 @@ let video;
 let detector;
 let hands = [];
 
+let showFinger = false;
+let fingertipPos = null;
+
 let ripples = [];
 let riverMask = [];
 
@@ -18,7 +21,6 @@ let phrases = [
   "A name once spoken, lost downstream."
 ];
 
-// ⬇️ make setup async
 async function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
@@ -36,7 +38,7 @@ async function setup() {
 
   detector = await handPoseDetection.createDetector(model, detectorConfig);
 
-  handLoop(); // ⬅️ start the detection loop
+  handLoop();
 }
 
 function draw() {
@@ -45,6 +47,15 @@ function draw() {
   drawRiver();
   drawRiverTexture();
   drawRipples();
+
+  // Draw fingertip indicator
+  if (showFinger && fingertipPos) {
+    push();
+    fill(255, 0, 0, 150);
+    noStroke();
+    ellipse(fingertipPos.x, fingertipPos.y, 20, 20);
+    pop();
+  }
 }
 
 function drawSunsetSky() {
@@ -194,10 +205,12 @@ async function handLoop() {
       hands = results;
 
       if (hands.length > 0) {
-       let indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
+        let indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
         if (indexTip) {
           let x = map(indexTip.x, 0, video.width, 0, width);
           let y = map(indexTip.y, 0, video.height, 0, height);
+
+          fingertipPos = { x, y };
 
           if (isInRiver(x, y) && millis() - lastRippleTime > rippleCooldown) {
             triggerRipple(x, y);
@@ -206,10 +219,18 @@ async function handLoop() {
         }
       }
     }
-    await new Promise(resolve => setTimeout(resolve, 100)); // limit loop speed
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+}
+
+function keyPressed() {
+  if (key === 'f' || key === 'F') {
+    showFinger = !showFinger;
+    console.log("Show finger:", showFinger);
   }
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
+
