@@ -24,7 +24,7 @@ async function setup() {
   noStroke();
 
   video = createCapture(VIDEO);
-  video.size(width, height);
+  video.size(640, 480);
   video.hide();
 
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
@@ -184,7 +184,6 @@ function drawRiverTexture() {
   pop();
 }
 
-// ⬇️ async loop instead of `await` in draw
 async function handLoop() {
   while (true) {
     if (detector && video.loadedmetadata) {
@@ -197,8 +196,8 @@ async function handLoop() {
       if (hands.length > 0) {
        let indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
         if (indexTip) {
-          let x = indexTip.x;
-          let y = indexTip.y;
+          let x = map(indexTip.x, 0, video.width, 0, width);
+          let y = map(indexTip.y, 0, video.height, 0, height);
 
           if (isInRiver(x, y) && millis() - lastRippleTime > rippleCooldown) {
             triggerRipple(x, y);
@@ -209,4 +208,8 @@ async function handLoop() {
     }
     await new Promise(resolve => setTimeout(resolve, 100)); // limit loop speed
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
