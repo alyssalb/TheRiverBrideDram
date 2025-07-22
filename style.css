@@ -1,0 +1,94 @@
+/* Magical realism-inspired styling for The River Bride site */
+
+:root {
+  --bg: #fdfaf6;
+  --text: #2c2c2c;
+  --accent: #4c7153;
+  --highlight: #a16941;
+  --header: #395542;
+  --font-serif: 'Georgia', serif;
+  --font-sans: 'Helvetica Neue', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-serif);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  background-image: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)), url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+  background-size: cover;
+}
+
+header {
+  background-color: var(--header);
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--highlight);
+}
+
+main {
+  padding: 2rem 1.5rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+section {
+  margin-bottom: 3rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-left: 6px solid var(--accent);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: var(--accent);
+  border-bottom: 2px solid var(--highlight);
+  padding-bottom: 0.25rem;
+}
+
+footer {
+  background-color: var(--header);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 600px) {
+  nav ul {
+    flex-direction: column;
+  }
+
+  main {
+    padding: 1rem;
+  }
+}
