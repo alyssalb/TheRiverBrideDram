@@ -56,22 +56,22 @@
 
   <div class="chatbox" id="chat"></div>
 
-  <input type="text" id="userInput" placeholder="Say something..." />
+  <input type="text" id="userInput" placeholder="Say something..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
   <button onclick="sendMessage()">Send</button>
 
   <script>
     const modes = {
       father: [
-        "I’m proud of how far you’ve come, kiddo.",
+        "I'm proud of how far you've come, kiddo.",
         "Let me show you the ways of the river, one current at a time.",
         "You've always made good choices. Let me guide you this time.",
         "The current has seen many pass, but few with your calm.", 
         "Drift steady, child, the river carries more than water.",
-        "The stones and pebblles whisper of your path, I listen all the time."
+        "The stones and pebbles whisper of your path. I listen all the time."
       ],
       friend: [
         "You always know how to brighten my waves!",
-        "Come splash with me—we’ll laugh until sunset.",
+        "Come splash with me—we'll laugh until sunset.",
         "You get me like no one else does.",
         "There's laughter in the banks when you're near.",
         "We've swum these waters together in our dreams.",
@@ -83,12 +83,12 @@
         "You make the river feel like home.",
         "The river slows when it sees you coming.",
         "Moonlight clings to your voice like dew on mangrove leaves.",
-        "If I could bottle this moment, I’d hide it where the tide never reaches."
+        "If I could bottle this moment, I'd hide it where the tide never reaches."
       ],
       lusty: [
-        "You like it deep, don’t you? The river knows your name.",
+        "You like it deep, don't you? The river knows your name.",
         "Let me show you what lies beneath the surface...",
-        "Every ripple is a promise I intend to keep."
+        "Every ripple is a promise I intend to keep.",
         "Some waters are shallow, but I sense you seek the deep places.",
         "The undertow remembers every touch—will you dive or drift?",
         "There are caves beneath this calm, filled with soft darkness. Let me show you."
@@ -114,14 +114,11 @@
 
       appendMessage(userText, "user");
 
-      console.log("Mode:", mode);
-      console.log("Available modes:", Object.keys(modes));
-
       if (!modes[mode]) {
         appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
         return;
       }
-      
+
       const replies = modes[mode];
       const botResponse = replies[Math.floor(Math.random() * replies.length)];
 
