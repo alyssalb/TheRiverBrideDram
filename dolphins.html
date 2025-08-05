@@ -60,14 +60,14 @@
   <button onclick="sendMessage()">Send</button>
 
   <script>
-    let branchState = null; 
-    
+    let branchState = null;
+
     const modes = {
       father: [
         "I'm proud of how far you've come, kiddo.",
         "Let me show you the ways of the river, one current at a time.",
         "You've always made good choices. Let me guide you this time.",
-        "The current has seen many pass, but few with your calm.", 
+        "The current has seen many pass, but few with your calm.",
         "Drift steady, child, the river carries more than water.",
         "The stones and pebbles whisper of your path. I listen all the time."
       ],
@@ -97,100 +97,103 @@
       ]
     };
 
- const responses = {
-    romantic: [
-      {
-        pattern: /love|partner|boyfriend|husband/i,
-        reply: "Love is a tide—sometimes gentle, sometimes wild. What kind of love do you seek?",
-        branches: [
-          { keyword: /gentle|calm/i, reply: "Then rest here in the eddies with me, where the current never rushes." },
-          { keyword: /wild|passion|storm/i, reply: "Ah, the whirlpool kind... I can pull you into something unforgettable." },
-          { keyword: /.*/, reply: "Whatever you seek, I will be the current beneath your choices." }
-        ]
-      },
-      {
-        pattern: /lonely|alone|single/i,
-        reply: "Even the widest river feels narrow without someone to flow beside.",
-        branches: [
-          { keyword: /stay|together/i, reply: "Then stay. The river never forgets those who wade in willingly." },
-          { keyword: /.*/, reply: "Let me show you the places where the moonlight never stops touching the surface." }
-        ]
-      },
-      {
-        pattern: /.*/,
-        reply: "My current always curves back to you."
-      }
-    ]
-  };
-
-  function appendMessage(text, sender) {
-    const chat = document.getElementById("chat");
-    const msg = document.createElement("div");
-    msg.className = sender;
-    msg.innerText = text;
-    chat.appendChild(msg);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function getPatternResponse(userText, mode) {
-    const patternSet = responses[mode];
-    if (!patternSet) return null;
-    for (let entry of patternSet) {
-      if (entry.pattern.test(userText)) {
-        if (entry.branches) {
-          branchState = entry.branches;
-        } else {
-          branchState = null;
+    const responses = {
+      romantic: [
+        {
+          pattern: /love|partner|boyfriend|husband/i,
+          reply: "Love is a tide—sometimes gentle, sometimes wild. What kind of love do you seek?",
+          branches: [
+            { keyword: /gentle|calm/i, reply: "Then rest here in the eddies with me, where the current never rushes." },
+            { keyword: /wild|passion|storm/i, reply: "Ah, the whirlpool kind... I can pull you into something unforgettable." },
+            { keyword: /.*/, reply: "Whatever you seek, I will be the current beneath your choices." }
+          ]
+        },
+        {
+          pattern: /lonely|alone|single/i,
+          reply: "Even the widest river feels narrow without someone to flow beside.",
+          branches: [
+            { keyword: /stay|together/i, reply: "Then stay. The river never forgets those who wade in willingly." },
+            { keyword: /.*/, reply: "Let me show you the places where the moonlight never stops touching the surface." }
+          ]
+        },
+        {
+          pattern: /.*/,
+          reply: "My current always curves back to you."
         }
-        return entry.reply;
+      ]
+    };
+
+    function appendMessage(text, sender) {
+      const chat = document.getElementById("chat");
+      const msg = document.createElement("div");
+      msg.className = sender;
+      msg.innerText = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function getPatternResponse(userText, mode) {
+      const patternSet = responses[mode];
+      if (!patternSet) return null;
+      for (let entry of patternSet) {
+        if (entry.pattern.test(userText)) {
+          if (entry.branches) {
+            branchState = entry.branches;
+          } else {
+            branchState = null;
+          }
+          return entry.reply;
+        }
       }
+      return null;
     }
-    return null;
-  }
 
-  function getBranchResponse(userText) {
-    if (!branchState) return null;
-    for (let b of branchState) {
-      if (b.keyword.test(userText)) {
-        branchState = null;
-        return b.reply;
+    function getBranchResponse(userText) {
+      if (!branchState) return null;
+      for (let b of branchState) {
+        if (b.keyword.test(userText)) {
+          branchState = null;
+          return b.reply;
+        }
       }
-    }
-    branchState = null;
-    return null;
-  }
-
-  function sendMessage() {
-    const input = document.getElementById("userInput");
-    const modeSelect = document.getElementById("mode");
-    const mode = modeSelect.value.trim().toLowerCase();
-
-    const userText = input.value.trim();
-    if (!userText) return;
-
-    appendMessage(userText, "user");
-
-    if (!modes[mode]) {
-      appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
-      return;
+      branchState = null;
+      return null;
     }
 
-    let botResponse = null;
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const modeSelect = document.getElementById("mode");
+      const mode = modeSelect.value.trim().toLowerCase();
 
-    if (branchState) {
-      botResponse = getBranchResponse(userText);
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      appendMessage(userText, "user");
+
+      if (!modes[mode]) {
+        appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
+        return;
+      }
+
+      let botResponse = null;
+
+      if (branchState) {
+        botResponse = getBranchResponse(userText);
+      }
+
+      if (!botResponse) {
+        const patternReply = getPatternResponse(userText, mode);
+        const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
+        botResponse = patternReply || fallbackReply;
+      }
+
+      setTimeout(() => {
+        appendMessage(botResponse, "bot");
+      }, 600);
+
+      input.value = "";
     }
+  </script>
+</body>
+</html>
 
-    if (!botResponse) {
-      const patternReply = getPatternResponse(userText, mode);
-      const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
-      botResponse = patternReply || fallbackReply;
-    }
-
-    setTimeout(() => {
-      appendMessage(botResponse, "bot");
-    }, 600);
-
-    input.value = "";
-  }
-</script>
