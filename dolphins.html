@@ -124,76 +124,85 @@
     };
 
     function appendMessage(text, sender) {
-      const chat = document.getElementById("chat");
-      const msg = document.createElement("div");
-      msg.className = sender;
-      msg.innerText = text;
-      chat.appendChild(msg);
-      chat.scrollTop = chat.scrollHeight;
-    }
+    const chat = document.getElementById("chat");
+    const msg = document.createElement("div");
+    msg.className = sender;
+    msg.innerText = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+  }
 
-    function getPatternResponse(userText, mode) {
-      const patternSet = responses[mode];
-      if (!patternSet) return null;
-      for (let entry of patternSet) {
-        if (entry.pattern.test(userText)) {
-          if (entry.branches) {
-            branchState = entry.branches;
-          } else {
-            branchState = null;
-          }
-          return entry.reply;
-        }
-      }
-      return null;
-    }
+  function displayBranchOptions(branches) {
+    const chat = document.getElementById("chat");
+    const optionContainer = document.createElement("div");
+    optionContainer.className = "bot";
 
-    function getBranchResponse(userText) {
-      if (!branchState) return null;
-      for (let b of branchState) {
-        if (b.keyword.test(userText)) {
+    branches.forEach((b, i) => {
+      const btn = document.createElement("button");
+      btn.innerText = b.keyword.toString().replace(/[\/\\^$*+?.()|[\]{}]/g, '').replace('i', '');
+      btn.style.margin = '4px';
+      btn.onclick = () => {
+        appendMessage(btn.innerText, "user");
+        const reply = b.reply;
+        appendMessage(reply, "bot");
+        branchState = null;
+        optionContainer.remove(); // Clean up
+      };
+      optionContainer.appendChild(btn);
+    });
+
+    chat.appendChild(optionContainer);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function getPatternResponse(userText, mode) {
+    const patternSet = responses[mode];
+    if (!patternSet) return null;
+    for (let entry of patternSet) {
+      if (entry.pattern.test(userText)) {
+        if (entry.branches) {
+          branchState = entry.branches;
+          displayBranchOptions(branchState);
+        } else {
           branchState = null;
-          return b.reply;
         }
+        return entry.reply;
       }
-      branchState = null;
-      return null;
+    }
+    return null;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById("userInput");
+    const modeSelect = document.getElementById("mode");
+    const mode = modeSelect.value.trim().toLowerCase();
+
+    const userText = input.value.trim();
+    if (!userText) return;
+
+    appendMessage(userText, "user");
+
+    if (!modes[mode]) {
+      appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
+      return;
     }
 
-    function sendMessage() {
-      const input = document.getElementById("userInput");
-      const modeSelect = document.getElementById("mode");
-      const mode = modeSelect.value.trim().toLowerCase();
+    let botResponse = null;
 
-      const userText = input.value.trim();
-      if (!userText) return;
-
-      appendMessage(userText, "user");
-
-      if (!modes[mode]) {
-        appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
-        return;
-      }
-
-      let botResponse = null;
-
-      if (branchState) {
-        botResponse = getBranchResponse(userText);
-      }
-
-      if (!botResponse) {
-        const patternReply = getPatternResponse(userText, mode);
-        const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
-        botResponse = patternReply || fallbackReply;
-      }
+    // Only respond if we're not in a branching pause
+    if (!branchState) {
+      const patternReply = getPatternResponse(userText, mode);
+      const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
+      botResponse = patternReply || fallbackReply;
 
       setTimeout(() => {
         appendMessage(botResponse, "bot");
       }, 600);
-
-      input.value = "";
     }
-  </script>
+
+    input.value = "";
+  }
+</script>
 </body>
 </html>
 
