@@ -95,6 +95,14 @@
       ]
     };
 
+    const responses = {
+      romantic: [
+        { pattern: /love|kiss|lonely|touch|heart|sweet|loving|partner|boyfriend|husband/i, reply: "Even the tide aches when it hears the word 'love'. Tell me more." },
+        { pattern: /alone|single/i, reply: "The river has room for two—if you drift close enough." },
+        { pattern: /.*/, reply: "My current always curves back to you." }
+      ]
+    };
+
     function appendMessage(text, sender) {
       const chat = document.getElementById("chat");
       const msg = document.createElement("div");
@@ -102,6 +110,17 @@
       msg.innerText = text;
       chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
+    }
+
+    function getPatternResponse(userText, mode) {
+      const patternSet = responses[mode];
+      if (!patternSet) return null;
+      for (let entry of patternSet) {
+        if (entry.pattern.test(userText)) {
+          return entry.reply;
+        }
+      }
+      return null;
     }
 
     function sendMessage() {
@@ -119,8 +138,9 @@
         return;
       }
 
-      const replies = modes[mode];
-      const botResponse = replies[Math.floor(Math.random() * replies.length)];
+      const patternReply = getPatternResponse(userText, mode);
+      const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
+      const botResponse = patternReply || fallbackReply;
 
       setTimeout(() => {
         appendMessage(botResponse, "bot");
