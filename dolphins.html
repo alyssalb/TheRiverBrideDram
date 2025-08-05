@@ -95,11 +95,29 @@
       ]
     };
 
-    const responses = {
+const responses = {
       romantic: [
-        { pattern: /love|kiss|lonely|touch|heart|sweet|loving|partner|boyfriend|husband/i, reply: "Even the tide aches when it hears the word 'love'. Tell me more." },
-        { pattern: /alone|single/i, reply: "The river has room for two—if you drift close enough." },
-        { pattern: /.*/, reply: "My current always curves back to you." }
+        {
+          pattern: /love|partner|boyfriend|husband/i,
+          reply: "Love is a tide—sometimes gentle, sometimes wild. What kind of love do you seek?",
+          branches: [
+            { keyword: /gentle|calm/i, reply: "Then rest here in the eddies with me, where the current never rushes." },
+            { keyword: /wild|passion|storm/i, reply: "Ah, the whirlpool kind... I can pull you into something unforgettable." },
+            { keyword: /.*/, reply: "Whatever you seek, I will be the current beneath your choices." }
+          ]
+        },
+        {
+          pattern: /lonely|alone|single/i,
+          reply: "Even the widest river feels narrow without someone to flow beside.",
+          branches: [
+            { keyword: /stay|together/i, reply: "Then stay. The river never forgets those who wade in willingly." },
+            { keyword: /.*/, reply: "Let me show you the places where the moonlight never stops touching the surface." }
+          ]
+        },
+        {
+          pattern: /.*/,
+          reply: "My current always curves back to you."
+        }
       ]
     };
 
@@ -117,12 +135,29 @@
       if (!patternSet) return null;
       for (let entry of patternSet) {
         if (entry.pattern.test(userText)) {
+          if (entry.branches) {
+            branchState = entry.branches;
+          } else {
+            branchState = null;
+          }
           return entry.reply;
         }
       }
       return null;
     }
 
+    function getBranchResponse(userText) {
+      if (!branchState) return null;
+      for (let b of branchState) {
+        if (b.keyword.test(userText)) {
+          branchState = null;
+          return b.reply;
+        }
+      }
+      branchState = null;
+      return null;
+    }
+    
     function sendMessage() {
       const input = document.getElementById("userInput");
       const modeSelect = document.getElementById("mode");
@@ -138,9 +173,16 @@
         return;
       }
 
-      const patternReply = getPatternResponse(userText, mode);
-      const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
-      const botResponse = patternReply || fallbackReply;
+      let botResponse = null;
+
+      if (branchState) {
+        botResponse = getBranchResponse(userText);
+      }
+
+      if (!botResponse) {
+        const patternReply = getPatternResponse(userText, mode);
+        const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
+        botResponse = patternReply || fallbackReply;
 
       setTimeout(() => {
         appendMessage(botResponse, "bot");
