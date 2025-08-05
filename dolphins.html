@@ -95,22 +95,29 @@
       ]
     };
 
+    function appendMessage(text, sender) {
+      const chat = document.getElementById("chat");
+      const msg = document.createElement("div");
+      msg.className = sender;
+      msg.innerText = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
     function sendMessage() {
       const input = document.getElementById("userInput");
-      const chat = document.getElementById("chat");
       const mode = document.getElementById("mode").value;
 
-      const userText = input.value;
+      const userText = input.value.trim();
       if (!userText) return;
 
-      chat.innerHTML += `<div class="user">${userText}</div>`;
+      appendMessage(userText, "user");
 
       const replies = modes[mode];
       const botResponse = replies[Math.floor(Math.random() * replies.length)];
 
       setTimeout(() => {
-        chat.innerHTML += `<div class="bot">${botResponse}</div>`;
-        chat.scrollTop = chat.scrollHeight;
+        appendMessage(botResponse, "bot");
       }, 600);
 
       input.value = "";
