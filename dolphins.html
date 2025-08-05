@@ -106,13 +106,22 @@
 
     function sendMessage() {
       const input = document.getElementById("userInput");
-      const mode = document.getElementById("mode").value;
+      const modeSelect = document.getElementById("mode");
+      const mode = modeSelect.value.trim().toLowerCase();
 
       const userText = input.value.trim();
       if (!userText) return;
 
       appendMessage(userText, "user");
 
+      console.log("Mode:", mode);
+      console.log("Available modes:", Object.keys(modes));
+
+      if (!modes[mode]) {
+        appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
+        return;
+      }
+      
       const replies = modes[mode];
       const botResponse = replies[Math.floor(Math.random() * replies.length)];
 
