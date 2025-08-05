@@ -1,1 +1,108 @@
-<h2>placeholder text</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dolphin Seducer Chatbot</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #c3f0ff, #f0fbff);
+      font-family: "Georgia", serif;
+      padding: 2em;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2e8b8b;
+    }
+    select, input[type="text"] {
+      padding: 0.5em;
+      margin: 0.5em 0;
+      width: 100%;
+      font-size: 1em;
+    }
+    .chatbox {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 1em;
+      height: 300px;
+      overflow-y: scroll;
+      margin-bottom: 1em;
+    }
+    .bot, .user {
+      margin: 0.5em 0;
+    }
+    .bot {
+      color: #005f73;
+      font-style: italic;
+    }
+    .user {
+      text-align: right;
+      color: #9b2226;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Talk to the Dolphin ✨</h1>
+
+  <label for="mode">Choose a seduction mode:</label>
+  <select id="mode">
+    <option value="father">Father Figure</option>
+    <option value="friend">Friend</option>
+    <option value="romantic">Romantic</option>
+    <option value="lusty">Lusty</option>
+  </select>
+
+  <div class="chatbox" id="chat"></div>
+
+  <input type="text" id="userInput" placeholder="Say something..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const modes = {
+      father: [
+        "I’m proud of how far you’ve come, kiddo.",
+        "Let me show you the ways of the river, one current at a time.",
+        "You've always made good choices. Let me guide you this time."
+      ],
+      friend: [
+        "You always know how to brighten my waves!",
+        "Come splash with me—we’ll laugh until sunset.",
+        "You get me like no one else does."
+      ],
+      romantic: [
+        "Your smile glimmers like moonlight on water.",
+        "I've waited tides and tides just to find you.",
+        "You make the river feel like home."
+      ],
+      lusty: [
+        "You like it deep, don’t you? The river knows your name.",
+        "Let me show you what lies beneath the surface...",
+        "Every ripple is a promise I intend to keep."
+      ]
+    };
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const chat = document.getElementById("chat");
+      const mode = document.getElementById("mode").value;
+
+      const userText = input.value;
+      if (!userText) return;
+
+      chat.innerHTML += `<div class="user">${userText}</div>`;
+
+      const replies = modes[mode];
+      const botResponse = replies[Math.floor(Math.random() * replies.length)];
+
+      setTimeout(() => {
+        chat.innerHTML += `<div class="bot">${botResponse}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      }, 600);
+
+      input.value = "";
+    }
+  </script>
+</body>
+</html>
