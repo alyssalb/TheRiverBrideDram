@@ -41,6 +41,17 @@
       text-align: right;
       color: #9b2226;
     }
+    #typingIndicator::after {
+      content: "";
+      display: inline-block;
+      animation: dots 1.5s steps(3, end) infinite;
+    }
+    @keyframes dots {
+      0% { content: ""; }
+      33% { content: "."; }
+      66% { content: ".."; }
+      100% { content: "..."; }
+    }
   </style>
 </head>
 <body>
@@ -55,6 +66,8 @@
   </select>
 
   <div class="chatbox" id="chat"></div>
+
+  <div id="typingIndicator" class="bot" style="display: none;">🐬 ...typing</div>
 
   <input type="text" id="userInput" placeholder="Say something..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
   <button onclick="sendMessage()">Send</button>
@@ -98,6 +111,77 @@
     };
 
     const responses = {
+      father: [
+      {
+          pattern: /proud|approval|worthy/i,
+          reply: "The river has watched you grow. What do you hope I see in you?",
+          branches: [
+            { keyword: /strength|resilience/i, reply: "Your strength flows steady, like the current that never yields." },
+            { keyword: /kindness|heart/i, reply: "Gentleness shapes the stones, child. You’ve shaped more than you know." },
+            { keyword: /.*/, reply: "Whatever you are, I see it. I always have." }
+        ]
+      },
+      {
+          pattern: /lost|mistake|wrong/i,
+          reply: "The river never punishes—it teaches. What lesson do you carry with you now?",
+          branches: [
+            { keyword: /regret|guilt/i, reply: "You’ve carried it long enough. Let the water hold it awhile." },
+            { keyword: /change|grow/i, reply: "Even the banks reshape over time. You're doing just fine." },
+            { keyword: /.*/, reply: "Your journey isn't judged here. Only witnessed." }
+        ]
+      }
+    ], 
+        
+      friend: [
+    {
+      pattern: /fun|laugh|game|play/i,
+      reply: "You always knew how to stir up ripples. What shall we do this time?",
+      branches: [
+        { keyword: /splash|swim|water/i, reply: "Last one to the waterfall is a soggy sardine!" },
+        { keyword: /talk|joke|chat/i, reply: "Let’s float and gossip like minnows with secrets." },
+        { keyword: /.*/, reply: "I’ll follow your lead—like leaves on a shared current." }
+      ]
+    },
+    {
+      pattern: /miss|gone|remember|memory/i,
+      reply: "There are echoes in the water—what do you hear when you think of me?",
+      branches: [
+        { keyword: /laughter|joy|sun/i, reply: "You always did bring the light. Even the river blushes thinking of it." },
+        { keyword: /quiet|still|peace/i, reply: "Some of my favorite moments were the silent ones. Just you, me, and the breeze." },
+        { keyword: /.*/, reply: "Funny how the water never forgets. Neither do I." }
+      ]
+    },
+    {
+      pattern: /.*/,
+      reply: "Let’s drift a while. No plans. Just us and the current."
+    }
+  ],
+     
+      lusty: [
+    {
+      pattern: /touch|skin|body|feel/i,
+      reply: "The water clings to skin like memory. Where do you want to be held?",
+      branches: [
+        { keyword: /arms|chest|embrace/i, reply: "Then come closer—let the tide wrap you in warmth and weight." },
+        { keyword: /everywhere|all|full/i, reply: "Greedy for the whole river, are we? I can flood you gently." },
+        { keyword: /.*/, reply: "No need to say it. The current already knows your shape." }
+      ]
+    },
+    {
+      pattern: /crave|desire|want|yearn/i,
+      reply: "Cravings are just whispers from the deep. What does yours say?",
+      branches: [
+        { keyword: /more|again|longer/i, reply: "We have all night. The moon will wait for us to finish." },
+        { keyword: /you|kiss|dolphin/i, reply: "Then let me break the surface between us." },
+        { keyword: /.*/, reply: "Some tides rise slow, some crash hard—choose how you come to me." }
+      ]
+    },
+    {
+      pattern: /.*/,
+      reply: "Some ripples never reach shore. Some touch everything in their path."
+    }
+  ],
+      
       romantic: [
         {
           pattern: /love|partner|boyfriend|husband/i,
@@ -195,13 +279,24 @@
       const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
       botResponse = patternReply || fallbackReply;
 
+    showTypingIndicator();
       setTimeout(() => {
+        hideTypingIndicator();
         appendMessage(botResponse, "bot");
-      }, 600);
+      }, 1200);
     }
 
     input.value = "";
   }
+
+    function showTypingIndicator() {
+    document.getElementById("typingIndicator").style.display = "block";
+  }
+
+    function hideTypingIndicator() {
+    document.getElementById("typingIndicator").style.display = "none";
+  }
+
 </script>
 </body>
 </html>
