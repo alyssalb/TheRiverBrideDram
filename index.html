@@ -32,7 +32,280 @@
 
   <main>
     <p>Welcome to the River Bride Dramaturgy Packet</p>
-  </main>
+    <p>Enjoy the photo gallery to get into the right mood, then click through the pages to learn more about the Amazon, the play, and the mythology involved. Also enjoy interactive elements in the "Dolphins", "Play in the River", and "Belmira and Helena" sections.</p>
+
+    <section class="gallery" aria-label="Photo Gallery">
+      <h2>Photo Gallery</h2>
+
+      <div class="gallery-grid">
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/Amazon Butterflies on the Shore.jpeg"
+            alt="Image of colorful butterflies flying around and resting on the shore in the Brazilian Amazon."
+            loading="lazy"
+            />
+          <figcaption>Brazilian Amazon Butterflies on the Shore</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/Amazon Overhead Brazil.jpeg"
+            alt="An image from above of the Amazon river in Brazil."
+            loading="lazy"
+            />
+          <figcaption>Brazilian Amazon as seen from above</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/Dolphin1.jpeg"
+            alt="Image of an Amazon pink river dolphin."
+            loading="lazy"
+            />
+          <figcaption>Pink River Dolphin</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/Forest1.jpeg"
+            alt="Image of an Amazon forest."
+            loading="lazy"
+            />
+          <figcaption>Amazon forest</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/Forest2.jpeg"
+            alt="Image of another Amazon forest."
+            loading="lazy"
+            />
+          <figcaption>Amazon forest</figcaption>
+        </figure>
+        
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/Dolphin2.jpeg"
+            alt="Image of an Amazonian pink river dolphin."
+            loading="lazy"
+            />
+          <figcaption>Pink River Dolphin</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/RainOnLeaf.jpeg"
+            alt="Image of rain on a leaf in the Amazon."
+            loading="lazy"
+            />
+          <figcaption>Rain on a Leaf</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/RainOnWater.jpeg"
+            alt="Image of rain on the water of the Amazon River."
+            loading="lazy"
+            />
+          <figcaption>Rain on the Amazon River</figcaption>
+        </figure>
+        
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/RiverBirdsEye.jpeg"
+            alt="Image of the river from above."
+            loading="lazy"
+            />
+          <figcaption>Amazon River from Above</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/RiverPlantPattern.jpeg"
+            alt="Image of an Amazon forest river plant patterns."
+            loading="lazy"
+            />
+          <figcaption>River Plant Patterns</figcaption>
+        </figure>   
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/capybara.jpeg"
+            alt="Image of a semiaquatic capybara."
+            loading="lazy"
+            />
+          <figcaption>Semiaquatic Capybara</figcaption>
+        </figure>
+
+        <figure class="gallery-item">
+          <img
+            src="images/gallery/cattleya labiata.jpeg"
+            alt="Image of the cattleya labiata, an orchid in the show."
+            loading="lazy"
+            />
+          <figcaption>Cattleya Labiata, a Native Brazilian Orchid</figcaption>
+        </figure>
+        
+      </div>
+     </section>
+
+        
+    <style>
+      .gallery {
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .gallery h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+      }
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .gallery-item {
+        display: grid;
+        gap: 6px;
+      }
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: zoom-in;
+        transition: transform 0.2s ease;
+      }
+      .gallery-item img:hover {
+        transform: scale(1.02);
+      }
+      .gallery-item figcaption {
+        font-size: 0.9rem;
+        color: #555;
+      }
+      .lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,15,15,0.9);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        z-index: 9999;
+      }
+      .lightbox-backdrop.active { display:flex; }
+      .lightbox-content {
+        position: relative;
+        max-width: min(95vw, 1200px);
+        max-height: 90vh;
+      }
+      .lightbox-img {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 12px;
+        display: block;
+      }
+      .lightbox-close,
+      .lightbox-prev,
+      .lightbox-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.25);
+        color: #fff;
+        padding: 0.6rem 0.8rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+      }
+      .lightbox-close {top: -44px; right: 0; transform: none; }
+      .lightbox-prev { left: -56px; }
+      .lightbox-next {right: -56px; }
+
+      @media (max-width: 600px) {
+        .lightbox-prev { left: 0.4rem; }
+        .lightbox-next { right: 0.4rem; }
+        .lightbox-close { right: 0.4rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gallery-item img {transition: none; }
+      }
+    </style>
+
+    <div class="lightbox-backdrop" id="lightbox" aria-hidden="true">
+      <div class="lightbox-content" role="dialog" aria-label="Image viewer">
+        <img class="lightbox-img" id="lightbox-img" alt="" />
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">Close ✕</button>
+        <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">‹</button>
+        <button class="lightbox-next" id="lightbox-next" aria-label="Next">›</button>
+      </div>
+    </div>
+
+    <script>
+    (function () {
+      const items = Array.from(document.querySelectorAll('.gallery-item img'));
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+      const btnClose = document.getElementById('lightbox-close');
+      const btnPrev = document.getElementById('lightbox-prev');
+      const btnNext = document.getElementById('lightbox-next');
+
+      let index = -1; // current image index
+
+      function openLightbox(i) {
+        index = i;
+        const fullSrc = items[index].dataset.full || items[index].src;
+        lbImg.src = fullSrc;
+        lbImg.alt = items[index].alt || '';
+        lb.classList.add('active');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLightbox() {
+        lb.classList.remove('active');
+        lb.setAttribute('aria-hidden', 'true');
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      }  
+
+      function showNext(step = 1) {
+        if (index < 0) return;
+        index = (index + step + items.length) % items.length;
+        const fullSrc = items[index].dataset.full || items[index].src;
+        lbImg.src = fullSrc;
+        lbImg.alt = items[index].alt || '';
+      }
+
+      items.forEach((img, i) => {
+        img.addEventListener('click', () => openLightbox(i));
+        img.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') openLightbox(i);
+        });
+        img.setAttribute('tabindex', '0'); // keyboard focusable
+      });
+
+      btnClose.addEventListener('click', closeLightbox);
+      btnPrev.addEventListener('click', () => showNext(-1));
+      btnNext.addEventListener('click', () => showNext(1));
+
+      lb.addEventListener('click', (e) => {
+        if (e.target === lb) closeLightbox();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (!lb.classList.contains('active')) return;
+        if (e.key === 'Escape')      closeLightbox();
+        if (e.key === 'ArrowRight')  showNext(1);
+        if (e.key === 'ArrowLeft')   showNext(-1);
+      });
+    })();
+  </script>
+</main>
  
   <footer>
     <p>&copy; 2025 River Bride Dramaturgy Packet, Alyssa Barrack</p>
