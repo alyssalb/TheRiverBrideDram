@@ -22,11 +22,7 @@
       font-family: Georgia, serif;
       color: #1d2a2a;
     }
-    .container {
-      max-width: var(--maxw);
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
+    .container { max-width: var(--maxw); margin: 2rem auto; padding: 0 1rem; }
     .hero {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -48,9 +44,8 @@
       color: inherit;
     }
     
-    body.running, html.running {overflow: hidden; }
-    canvas {
-      display: block; }
+    body.running, html.running { overflow: hidden; }
+    canvas { display: block; }
 
     .exit-overlay {
       position: fixed;
@@ -61,7 +56,8 @@
     }
     body.running .exit-overlay { display: block; }
   </style>
-  <!-- Required libraries -->
+
+  <!-- Required libraries (p5 + TF stack) -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
@@ -76,9 +72,12 @@
       <p>Make ripples to learn about the river and its mysteries. This sketch uses p5.js and TensorFlow to track your hand movements using your computer's camera and let you play in the river to feel out its secrets.</p>
       <div class="actions">
         <button class="btn" id="startFull">Start Full-Screen</button>
-        <a class="btn" id="openTab" href="?run=1">Open in New Tab</a>
+        <!-- NEW: open in a new tab with absolute URL and ?run=1 -->
+        <a class="btn" id="openTab" href="#" target="_blank" rel="noopener">Open in New Tab</a>
       </div>
-      <p style="margin-top: .8rem; font-size: .95rem; color: #6a7777">Tip: Allow camera access if prompted to enable hand tracking. No data or capture are recorded through this site.</p>
+      <p style="margin-top: .8rem; font-size: .95rem; color: #6a7777">
+        Tip: Allow camera access if prompted to enable hand tracking. No data or capture are recorded through this site.
+      </p>
     </section>
   </main>
 
@@ -86,25 +85,49 @@
     <button class="btn" id="exitBtn" title="Exit the interactive">Exit x</button>
   </div>
 
-  
- <script>
+  <script>
     (function () {
-      const landing = document.getElementById('landing');
+      const landing  = document.getElementById('landing');
       const startBtn = document.getElementById('startFull');
       const exitBtn  = document.getElementById('exitBtn');
+      const openTab  = document.getElementById('openTab');
 
-      // Lazy-load the sketch exactly once
+      // Build absolute URL for "Open in New Tab"
+      const baseUrl = location.origin + location.pathname; // current page, absolute
+      openTab.href = baseUrl + '?run=1';
+
       let sketchLoaded = false;
+
       function loadSketch() {
         if (sketchLoaded) return;
         sketchLoaded = true;
+
+        if (!window.p5) {
+          console.error('[Play in the River] p5 is not loaded. Check CDN.');
+        }
+
         const s = document.createElement('script');
         s.src = 'sketch.js';
         s.async = true;
+
+        s.onload = () => {
+          console.log('[Play in the River] sketch.js loaded.');
+        };
+        s.onerror = () => {
+          sketchLoaded = false;
+          alert('Could not load sketch.js. Check the file path and network.');
+          console.error('[Play in the River] Failed to load sketch.js');
+          // Show landing again so user isn’t stuck
+          landing.style.display = '';
+          document.body.classList.remove('running');
+          document.documentElement.classList.remove('running');
+        };
+
         document.body.appendChild(s);
       }
 
       function startRun() {
+        console.log('[Play in the River] Starting…');
         document.body.classList.add('running');
         document.documentElement.classList.add('running');
         if (landing) landing.style.display = 'none';
@@ -112,16 +135,14 @@
       }
 
       function exitRun() {
-        // Simplest reliable reset: reload without the ?run param.
-        const base = location.pathname + (location.search.includes('run=1') ? '' : location.search);
-        // Remove query string entirely for a clean landing
+        // Clean reset back to landing (no query string)
         window.location.href = location.pathname;
       }
 
-      startBtn?.addEventListener('click', startRun);
-      exitBtn?.addEventListener('click', exitRun);
+      startBtn && startBtn.addEventListener('click', startRun);
+      exitBtn  && exitBtn.addEventListener('click', exitRun);
 
-      // Auto-start if opened with ?run=1
+      // Auto-start if opened with ?run=1 (works in same tab or new tab)
       const params = new URLSearchParams(window.location.search);
       if (params.get('run') === '1') {
         startRun();
