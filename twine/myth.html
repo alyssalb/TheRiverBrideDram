@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The River Bride Dramaturgy — Helena and Belmira</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    :root {
+      --card-bg: #ffffff;
+      --card-border: #e3e3e3;
+      --btn-bg: #f6f6f6;
+      --btn-border: #cfcfcf;
+      --maxw: 1100px;
+      --radius: 12px;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #f8fcff;
+      font-family: Georgia, serif;
+      color: #1d2a2a;
+    }
+
+    header, footer, main { width: 100%; }
+    .container { max-width: var(--maxw); margin: 2rem auto; padding: 0 1rem; }
+
+    header h1 { margin: 0 0 .5rem; }
+    header nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .75rem; }
+    header nav a { text-decoration: none; }
+
+    .hero {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.2rem 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    }
+    .hero h2 { margin: 0 0 .4rem; font-weight: 600; }
+    .hero p  { margin: 0; color: #4d5a5a; }
+
+    .btn {
+      display: inline-block;
+      padding: .6rem .9rem;
+      border-radius: 10px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    .twine-toolbar { display: flex; gap: .6rem; align-items: center; margin: .8rem 0; }
+
+    #twineWrap {
+      position: relative;
+      width: 100%;
+      height: 70vh;                /* Adjust height as you like */
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+    #twineFrame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    :fullscreen #twineWrap,
+    #twineWrap:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    footer p { color: #4d5a5a; }
+  </style>
+</head>
+
+<body>
+  <header class="container">
+    <h1>The River Bride Dramaturgy</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="note.html">Dramaturg's Note</a></li>
+        <li><a href="play.html">On the Play</a></li>
+        <li><a href="culture.html">Culture & Myth</a></li>
+        <li><a href="timeline.html">Facts about the Brazilian Amazon</a></li>
+        <li><a href="dolphins.html">Dolphins</a></li>
+        <li><a href="play-river.html">Play in the River</a></li>
+        <li><a href="myth.html" aria-current="page">Belmira and Helena</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Belmira and Helena — Choose-Your-Own-Path</h2>
+      <p>A branching story about two sisters and their decisions. Think about them, learn their story, and perhaps even try to make other choices.</p>
+    </section>
+
+    <div class="twine-toolbar">
+      <a class="btn" href="twine/story.html" id="openTwineTab" target="_blank" rel="noopener">Open in New Tab</a>
+    </div>
+
+    <section id="twineWrap" aria-label="Twine story">
+      <iframe
+        id="twineFrame"
+        title="Belmira and Helena — Choose-Your-Own-Path"
+        loading="lazy"
+        data-src="twine/story.html"
+      ></iframe>
+      <noscript>
+        <p>Your browser has JavaScript disabled. <a href="twine/story.html">Open the story.</a></p>
+      </noscript>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p>&copy; 2025 River Bride Dramaturgy Packet, Alyssa Barrack</p>
+  </footer>
+
+  <script>
+    (function () {
+      const frame = document.getElementById('twineFrame');
+      if (!frame) return;
+
+      const src = frame.getAttribute('data-src');
+      if (!('IntersectionObserver' in window)) {
+        if (src) frame.src = src;
+        return;
+      }
+
+      const io = new IntersectionObserver((entries, observer) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            if (src && !frame.src) frame.src = src;
+            observer.disconnect();
+          }
+        }
+      }, { root: null, rootMargin: '0px', threshold: 0.1 });
+
+      io.observe(frame);
+    })();
+  </script>
+</body>
+</html>
