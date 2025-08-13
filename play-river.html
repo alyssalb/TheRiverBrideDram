@@ -4,15 +4,62 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Play in the River</title>
+ 
   <style>
-    body, html {
+    :root {
+      --card-bg: #ffffff;
+      --card-border: #e3e3e3;
+      --btn-bg: #f6f6f6;
+      --btn-border: #cfcfcf;
+      --maxw: 1100px;
+      --radius: 12px;
+    }
+    html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      height: 100%;
+      background: #f8fcff;
+      font-family: Georgia, serif;
+      color: #1d2a2a;
     }
+    .container {
+      max-width: var(--maxw);
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .hero {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.2rem 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    }
+    .hero h1 { margin: 0 0 .4rem; font-weight: 600; }
+    .hero p  { margin: 0 0 1rem; color: #4d5a5a; }
+    .actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: .6rem .9rem;
+      border-radius: 10px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    body.running, html.running {overflow: hidden; }
     canvas {
-      display: block;
+      display: block; }
+
+    .exit-overlay {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 99999;
+      display: none;
     }
+    body.running .exit-overlay { display: block; }
   </style>
   <!-- Required libraries -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
@@ -23,7 +70,64 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
 </head>
 <body>
-  <script src="sketch.js"></script>
+  <main id="landing" class="container">
+    <section class="hero">
+      <h1>Play in the River</h1>
+      <p>Make ripples to learn about the river and its mysteries. This sketch uses p5.js and TensorFlow to track your hand movements using your computer's camera and let you play in the river to feel out its secrets.</p>
+      <div class="actions">
+        <button class="btn" id="startFull">Start Full-Screen</button>
+        <a class="btn" id="openTab" href="?run=1">Open in New Tab</a>
+      </div>
+      <p style="margin-top: .8rem; font-size: .95rem; color: #6a7777">Tip: Allow camera access if prompted to enable hand tracking. No data or capture are recorded through this site.</p>
+    </section>
+  </main>
+
+  <div class="exit-overlay">
+    <button class="btn" id="exitBtn" title="Exit the interactive">Exit x</button>
+  </div>
+
+  
+ <script>
+    (function () {
+      const landing = document.getElementById('landing');
+      const startBtn = document.getElementById('startFull');
+      const exitBtn  = document.getElementById('exitBtn');
+
+      // Lazy-load the sketch exactly once
+      let sketchLoaded = false;
+      function loadSketch() {
+        if (sketchLoaded) return;
+        sketchLoaded = true;
+        const s = document.createElement('script');
+        s.src = 'sketch.js';
+        s.async = true;
+        document.body.appendChild(s);
+      }
+
+      function startRun() {
+        document.body.classList.add('running');
+        document.documentElement.classList.add('running');
+        if (landing) landing.style.display = 'none';
+        loadSketch();
+      }
+
+      function exitRun() {
+        // Simplest reliable reset: reload without the ?run param.
+        const base = location.pathname + (location.search.includes('run=1') ? '' : location.search);
+        // Remove query string entirely for a clean landing
+        window.location.href = location.pathname;
+      }
+
+      startBtn?.addEventListener('click', startRun);
+      exitBtn?.addEventListener('click', exitRun);
+
+      // Auto-start if opened with ?run=1
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('run') === '1') {
+        startRun();
+      }
+    })();
+  </script>
 </body>
 </html>
 
