@@ -1,5 +1,3 @@
-/* globals handPoseDetection, tf */
-
 let video;
 let detector;
 let hands = [];
@@ -23,6 +21,15 @@ let phrases = [
   "A name once spoken, lost downstream."
 ];
 
+// ----- NEW: mount sizing helper -----
+function getMountSize() {
+  const m = document.getElementById('sketchMount');
+  if (!m) return { w: windowWidth, h: windowHeight };
+  const r = m.getBoundingClientRect();
+  return { w: r.width, h: r.height };
+}
+// ------------------------------------
+
 // --- additions: small helpers + logs ---
 function log(...args){ console.log("[River]", ...args); }
 function warn(...args){ console.warn("[River]", ...args); }
@@ -45,7 +52,11 @@ async function waitForVideoReady(elt, timeoutMs = 8000) {
 // --- end additions ---
 
 async function setup() {
-  createCanvas(windowWidth, windowHeight);
+  // ----- CHANGED: create canvas sized to #sketchMount and mount it -----
+  const { w, h } = getMountSize();
+  const c = createCanvas(w, h);
+  c.parent('sketchMount');
+  // ---------------------------------------------------------------------
   noStroke();
 
   // your original createCapture
@@ -307,6 +318,8 @@ function keyPressed() {
   }
 }
 
+// ----- CHANGED: resize to the mount container -----
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  const { w, h } = getMountSize();
+  resizeCanvas(w, h);
 }
