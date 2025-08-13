@@ -2,77 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dolphin Seducer Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The River Bride Dramaturgy — Dolphin Chatbot</title>
+
+  <!-- Global site stylesheet (keep if you already have one) -->
+  <link rel="stylesheet" href="style.css" />
+
   <style>
-    body {
-      background: linear-gradient(to bottom, #c3f0ff, #f0fbff);
-      font-family: "Georgia", serif;
-      padding: 2em;
-      max-width: 700px;
-      margin: auto;
+    :root{
+      --card-bg:#fff; --card-border:#e3e3e3; --btn-bg:#f6f6f6; --btn-border:#cfcfcf;
+      --maxw:1100px; --radius:12px; --ink:#1d2a2a; --muted:#4d5a5a;
     }
-    h1 {
-      text-align: center;
-      color: #2e8b8b;
+    html,body{margin:0;padding:0;min-height:100%;background:#f8fcff;font-family:Georgia,serif;color:var(--ink)}
+    header,footer,main{width:100%}
+    .container{max-width:var(--maxw);margin:2rem auto;padding:0 1rem}
+    header h1{margin:0 0 .5rem}
+    header nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.75rem}
+    header nav a{text-decoration:none}
+
+    .hero{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);
+      padding:1.2rem 1.2rem 1rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+    .hero h2{margin:0 0 .4rem;font-weight:600}
+    .hero p{margin:0;color:var(--muted)}
+
+    /* Chat UI */
+    .chat-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);
+      padding:1rem; margin-top:1rem; box-shadow:0 2px 10px rgba(0,0,0,.03)}
+    label{display:block;margin:.3rem 0 .2rem}
+    select{padding:.55rem;border:1px solid #cfcfcf;border-radius:10px;font-size:1rem;width:100%;max-width:280px}
+    .controls{display:grid;grid-template-columns:1fr auto;gap:.5rem;margin:.6rem 0}
+    .input{padding:.55rem;border:1px solid #cfcfcf;border-radius:10px;font-size:1rem}
+    .btn{padding:.55rem .9rem;border-radius:10px;border:1px solid var(--btn-border);background:var(--btn-bg);cursor:pointer}
+
+    .chatbox{background:#fff;border:1px solid #ddd;border-radius:10px;padding:.8rem;height:320px;overflow:auto}
+    .bot,.user{margin:.45rem 0;line-height:1.35}
+    .bot{color:#005f73;font-style:italic}
+    .user{text-align:right;color:#9b2226}
+
+    /* Typing indicator */
+    #typingIndicator::after{content:"";display:inline-block;animation:dots 1.5s steps(3,end) infinite}
+    @keyframes dots{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
+
+    /* Branch option buttons */
+    .branch-buttons{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem}
+    .branch-buttons button{
+      margin:0;
+      padding:.35rem .6rem;
+      border-radius:8px;
+      border:1px solid #cfcfcf;
+      background:#f6f6f6;
+      cursor:pointer;
+      white-space:normal;
+      max-width:100%;
+      word-break:break-word;
     }
-    select, input[type="text"] {
-      padding: 0.5em;
-      margin: 0.5em 0;
-      width: 100%;
-      font-size: 1em;
-    }
-    .chatbox {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 1em;
-      height: 300px;
-      overflow-y: scroll;
-      margin-bottom: 1em;
-    }
-    .bot, .user {
-      margin: 0.5em 0;
-    }
-    .bot {
-      color: #005f73;
-      font-style: italic;
-    }
-    .user {
-      text-align: right;
-      color: #9b2226;
-    }
-    #typingIndicator::after {
-      content: "";
-      display: inline-block;
-      animation: dots 1.5s steps(3, end) infinite;
-    }
-    @keyframes dots {
-      0% { content: ""; }
-      33% { content: "."; }
-      66% { content: ".."; }
-      100% { content: "..."; }
-    }
+
+    footer p{color:var(--muted)}
   </style>
 </head>
+
 <body>
-  <h1>✨ Talk to the Dolphin ✨</h1>
+  <header class="container">
+    <h1>The River Bride Dramaturgy</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="note.html">Dramaturg's Note</a></li>
+        <li><a href="play.html">On the Play</a></li>
+        <li><a href="culture.html">Culture & Myth</a></li>
+        <li><a href="timeline.html">Facts about the Brazilian Amazon</a></li>
+        <li><a href="dolphins.html" aria-current="page">Dolphins</a></li>
+        <li><a href="play-river.html">Play in the River</a></li>
+        <li><a href="myth.html">Belmira and Helena</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <label for="mode">Choose a seduction mode:</label>
-  <select id="mode">
-    <option value="father">Father Figure</option>
-    <option value="friend">Friend</option>
-    <option value="romantic">Romantic</option>
-    <option value="lusty">Lusty</option>
-  </select>
+  <main class="container">
+    <!-- Landing / intro -->
+    <section class="hero">
+      <h2>✨ Talk to the Dolphin ✨</h2>
+      <p>A magical-realist companion that replies in river metaphors. Choose a tone and drift.</p>
+    </section>
 
-  <div class="chatbox" id="chat"></div>
+    <!-- Embedded chatbot -->
+    <section class="chat-card" aria-label="Dolphin chatbot">
+      <label for="mode">Choose a mode:</label>
+      <select id="mode">
+        <option value="father">Father Figure</option>
+        <option value="friend">Friend</option>
+        <option value="romantic">Romantic</option>
+        <option value="lusty">Lusty</option>
+      </select>
 
-  <div id="typingIndicator" class="bot" style="display: none;">🐬 ...typing</div>
+      <div class="chatbox" id="chat" aria-live="polite"></div>
+      <div id="typingIndicator" class="bot" style="display:none;">🐬 …typing</div>
 
-  <input type="text" id="userInput" placeholder="Say something..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
-  <button onclick="sendMessage()">Send</button>
+      <div class="controls">
+        <input class="input" type="text" id="userInput" placeholder="Say something…"/>
+        <button class="btn" id="sendBtn" type="button">Send</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p>&copy; 2025 River Bride Dramaturgy Packet, Alyssa Barrack</p>
+  </footer>
 
   <script>
+    // ——— Chat state ———
     let branchState = null;
 
     const modes = {
@@ -112,192 +150,213 @@
 
     const responses = {
       father: [
-      {
+        {
           pattern: /proud|approval|worthy/i,
           reply: "The river has watched you grow. What do you hope I see in you?",
           branches: [
-            { keyword: /strength|resilience/i, reply: "Your strength flows steady, like the current that never yields." },
-            { keyword: /kindness|heart/i, reply: "Gentleness shapes the stones, child. You’ve shaped more than you know." },
-            { keyword: /.*/, reply: "Whatever you are, I see it. I always have." }
-        ]
-      },
-      {
+            { keyword: /strength|resilience/i, label: "Strength", reply: "Your strength flows steady, like the current that never yields." },
+            { keyword: /kindness|heart/i,    label: "Kindness", reply: "Gentleness shapes the stones, child. You’ve shaped more than you know." },
+            { keyword: /.*/,                 label: "Continue", reply: "Whatever you are, I see it. I always have." }
+          ]
+        },
+        {
           pattern: /lost|mistake|wrong/i,
           reply: "The river never punishes—it teaches. What lesson do you carry with you now?",
           branches: [
-            { keyword: /regret|guilt/i, reply: "You’ve carried it long enough. Let the water hold it awhile." },
-            { keyword: /change|grow/i, reply: "Even the banks reshape over time. You're doing just fine." },
-            { keyword: /.*/, reply: "Your journey isn't judged here. Only witnessed." }
-        ]
-      }
-    ], 
-        
+            { keyword: /regret|guilt/i, label: "Regret", reply: "You’ve carried it long enough. Let the water hold it awhile." },
+            { keyword: /change|grow/i,  label: "Change", reply: "Even the banks reshape over time. You're doing just fine." },
+            { keyword: /.*/,            label: "Continue", reply: "Your journey isn't judged here. Only witnessed." }
+          ]
+        }
+      ],
       friend: [
-    {
-      pattern: /fun|laugh|game|play/i,
-      reply: "You always knew how to stir up ripples. What shall we do this time?",
-      branches: [
-        { keyword: /splash|swim|water/i, reply: "Last one to the waterfall is a soggy sardine!" },
-        { keyword: /talk|joke|chat/i, reply: "Let’s float and gossip like minnows with secrets." },
-        { keyword: /.*/, reply: "I’ll follow your lead—like leaves on a shared current." }
-      ]
-    },
-    {
-      pattern: /miss|gone|remember|memory/i,
-      reply: "There are echoes in the water—what do you hear when you think of me?",
-      branches: [
-        { keyword: /laughter|joy|sun/i, reply: "You always did bring the light. Even the river blushes thinking of it." },
-        { keyword: /quiet|still|peace/i, reply: "Some of my favorite moments were the silent ones. Just you, me, and the breeze." },
-        { keyword: /.*/, reply: "Funny how the water never forgets. Neither do I." }
-      ]
-    },
-    {
-      pattern: /.*/,
-      reply: "Let’s drift a while. No plans. Just us and the current."
-    }
-  ],
-     
+        {
+          pattern: /fun|laugh|game|play/i,
+          reply: "You always knew how to stir up ripples. What shall we do this time?",
+          branches: [
+            { keyword: /splash|swim|water/i, label: "Splash", reply: "Last one to the waterfall is a soggy sardine!" },
+            { keyword: /talk|joke|chat/i,    label: "Talk",   reply: "Let’s float and gossip like minnows with secrets." },
+            { keyword: /.*/,                  label: "You choose", reply: "I’ll follow your lead—like leaves on a shared current." }
+          ]
+        },
+        {
+          pattern: /miss|gone|remember|memory/i,
+          reply: "There are echoes in the water—what do you hear when you think of me?",
+          branches: [
+            { keyword: /laughter|joy|sun/i, label: "Joy",   reply: "You always did bring the light. Even the river blushes thinking of it." },
+            { keyword: /quiet|still|peace/i, label: "Quiet", reply: "Some of my favorite moments were the silent ones. Just you, me, and the breeze." },
+            { keyword: /.*/,                 label: "Continue", reply: "Funny how the water never forgets. Neither do I." }
+          ]
+        },
+        { pattern: /.*/, reply: "Let’s drift a while. No plans. Just us and the current." }
+      ],
       lusty: [
-    {
-      pattern: /touch|skin|body|feel/i,
-      reply: "The water clings to skin like memory. Where do you want to be held?",
-      branches: [
-        { keyword: /arms|chest|embrace/i, reply: "Then come closer—let the tide wrap you in warmth and weight." },
-        { keyword: /everywhere|all|full/i, reply: "Greedy for the whole river, are we? I can flood you gently." },
-        { keyword: /.*/, reply: "No need to say it. The current already knows your shape." }
-      ]
-    },
-    {
-      pattern: /crave|desire|want|yearn/i,
-      reply: "Cravings are just whispers from the deep. What does yours say?",
-      branches: [
-        { keyword: /more|again|longer/i, reply: "We have all night. The moon will wait for us to finish." },
-        { keyword: /you|kiss|dolphin/i, reply: "Then let me break the surface between us." },
-        { keyword: /.*/, reply: "Some tides rise slow, some crash hard—choose how you come to me." }
-      ]
-    },
-    {
-      pattern: /.*/,
-      reply: "Some ripples never reach shore. Some touch everything in their path."
-    }
-  ],
-      
+        {
+          pattern: /touch|skin|body|feel/i,
+          reply: "The water clings to skin like memory. Where do you want to be held?",
+          branches: [
+            { keyword: /arms|chest|embrace/i, label: "Embrace",   reply: "Then come closer—let the tide wrap you in warmth and weight." },
+            { keyword: /everywhere|all|full/i, label: "Everywhere", reply: "Greedy for the whole river, are we? I can flood you gently." },
+            { keyword: /.*/,                   label: "Surprise me", reply: "No need to say it. The current already knows your shape." }
+          ]
+        },
+        {
+          pattern: /crave|desire|want|yearn/i,
+          reply: "Cravings are just whispers from the deep. What does yours say?",
+          branches: [
+            { keyword: /more|again|longer/i, label: "More",  reply: "We have all night. The moon will wait for us to finish." },
+            { keyword: /you|kiss|dolphin/i,  label: "You",   reply: "Then let me break the surface between us." },
+            { keyword: /.*/,                 label: "Decide", reply: "Some tides rise slow, some crash hard—choose how you come to me." }
+          ]
+        },
+        { pattern: /.*/, reply: "Some ripples never reach shore. Some touch everything in their path." }
+      ],
       romantic: [
         {
           pattern: /love|partner|boyfriend|husband/i,
           reply: "Love is a tide—sometimes gentle, sometimes wild. What kind of love do you seek?",
           branches: [
-            { keyword: /gentle|calm/i, reply: "Then rest here in the eddies with me, where the current never rushes." },
-            { keyword: /wild|passion|storm/i, reply: "Ah, the whirlpool kind... I can pull you into something unforgettable." },
-            { keyword: /.*/, reply: "Whatever you seek, I will be the current beneath your choices." }
+            { keyword: /gentle|calm/i,        label: "Gentle", reply: "Then rest here in the eddies with me, where the current never rushes." },
+            { keyword: /wild|passion|storm/i, label: "Wild",   reply: "Ah, the whirlpool kind... I can pull you into something unforgettable." },
+            { keyword: /.*/,                  label: "Unsure", reply: "Whatever you seek, I will be the current beneath your choices." }
           ]
         },
         {
           pattern: /lonely|alone|single/i,
           reply: "Even the widest river feels narrow without someone to flow beside.",
           branches: [
-            { keyword: /stay|together/i, reply: "Then stay. The river never forgets those who wade in willingly." },
-            { keyword: /.*/, reply: "Let me show you the places where the moonlight never stops touching the surface." }
+            { keyword: /stay|together/i, label: "Stay",     reply: "Then stay. The river never forgets those who wade in willingly." },
+            { keyword: /.*/,             label: "Show me",  reply: "Let me show you the places where the moonlight never stops touching the surface." }
           ]
         },
-        {
-          pattern: /.*/,
-          reply: "My current always curves back to you."
-        }
+        { pattern: /.*/, reply: "My current always curves back to you." }
       ]
     };
 
-    function appendMessage(text, sender) {
-    const chat = document.getElementById("chat");
-    const msg = document.createElement("div");
-    msg.className = sender;
-    msg.innerText = text;
-    chat.appendChild(msg);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function displayBranchOptions(branches) {
-    const chat = document.getElementById("chat");
-    const optionContainer = document.createElement("div");
-    optionContainer.className = "bot";
-
-    branches.forEach((b, i) => {
-      const btn = document.createElement("button");
-      btn.innerText = b.keyword.toString().replace(/[\/\\^$*+?.()|[\]{}]/g, '').replace('i', '');
-      btn.style.margin = '4px';
-      btn.onclick = () => {
-        appendMessage(btn.innerText, "user");
-        const reply = b.reply;
-        appendMessage(reply, "bot");
-        branchState = null;
-        optionContainer.remove(); // Clean up
-      };
-      optionContainer.appendChild(btn);
-    });
-
-    chat.appendChild(optionContainer);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function getPatternResponse(userText, mode) {
-    const patternSet = responses[mode];
-    if (!patternSet) return null;
-    for (let entry of patternSet) {
-      if (entry.pattern.test(userText)) {
-        if (entry.branches) {
-          branchState = entry.branches;
-          displayBranchOptions(branchState);
-        } else {
-          branchState = null;
-        }
-        return entry.reply;
+    // ——— Label helper for branch buttons ———
+    function makeOptionLabel(entry){
+      if (entry && typeof entry.label === 'string' && entry.label.trim()) {
+        return entry.label.trim();
       }
-    }
-    return null;
-  }
-
-  function sendMessage() {
-    const input = document.getElementById("userInput");
-    const modeSelect = document.getElementById("mode");
-    const mode = modeSelect.value.trim().toLowerCase();
-
-    const userText = input.value.trim();
-    if (!userText) return;
-
-    appendMessage(userText, "user");
-
-    if (!modes[mode]) {
-      appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
-      return;
-    }
-
-    let botResponse = null;
-
-    // Only respond if we're not in a branching pause
-    if (!branchState) {
-      const patternReply = getPatternResponse(userText, mode);
-      const fallbackReply = modes[mode][Math.floor(Math.random() * modes[mode].length)];
-      botResponse = patternReply || fallbackReply;
-
-    showTypingIndicator();
-      setTimeout(() => {
-        hideTypingIndicator();
-        appendMessage(botResponse, "bot");
-      }, 1200);
+      const rx = entry?.keyword;
+      if (rx instanceof RegExp) {
+        let s = rx.source;
+        if (s === '.*') return 'Continue';
+        s = s.split('|')[0];
+        s = s
+          .replace(/^\^|\$$/g,'')
+          .replace(/\\b/g,'')
+          .replace(/\\./g,'')
+          .replace(/\(\?:/g,'(')
+          .replace(/[()]/g,'')
+          .replace(/\[.*?\]/g,'')
+          .replace(/\.\*/g,'')
+          .replace(/[?*+]+/g,'')
+          .replace(/_/g,' ')
+          .trim();
+        if (!s) return 'Continue';
+        return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+      }
+      if (typeof rx === 'string' && rx.trim()) return rx.trim();
+      return 'Continue';
     }
 
-    input.value = "";
-  }
+    // ——— UI helpers ———
+    function appendMessage(text, sender) {
+      const chat = document.getElementById("chat");
+      const msg = document.createElement("div");
+      msg.className = sender;
+      msg.innerText = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-    function showTypingIndicator() {
-    document.getElementById("typingIndicator").style.display = "block";
-  }
+    function displayBranchOptions(branches) {
+      const chat = document.getElementById("chat");
+      const box  = document.createElement("div");
+      box.className = "bot branch-buttons";
+      box.setAttribute('role','group');
+      box.setAttribute('aria-label','Choices');
 
-    function hideTypingIndicator() {
-    document.getElementById("typingIndicator").style.display = "none";
-  }
+      const seen = new Set();
+      branches.forEach((b) => {
+        const label = makeOptionLabel(b);
+        if (seen.has(label)) return;
+        seen.add(label);
 
-</script>
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerText = label;
+
+        btn.onclick = () => {
+          appendMessage(label, "user");
+          showTypingIndicator();
+          setTimeout(() => {
+            hideTypingIndicator();
+            appendMessage(b.reply, "bot");
+            branchState = null;
+            box.remove();
+          }, 300);
+        };
+        box.appendChild(btn);
+      });
+
+      chat.appendChild(box);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function getPatternResponse(userText, mode) {
+      const set = responses[mode];
+      if (!set) return null;
+      for (const entry of set) {
+        entry.pattern.lastIndex = 0; // defensive (if /g ever added)
+        if (entry.pattern.test(userText)) {
+          if (entry.branches) {
+            branchState = entry.branches;
+            setTimeout(() => displayBranchOptions(branchState), 300);
+          } else {
+            branchState = null;
+          }
+          return entry.reply;
+        }
+      }
+      return null;
+    }
+
+    function showTypingIndicator(){ document.getElementById("typingIndicator").style.display = "block"; }
+    function hideTypingIndicator(){ document.getElementById("typingIndicator").style.display = "none"; }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const mode  = document.getElementById("mode").value.trim().toLowerCase();
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      appendMessage(userText, "user");
+
+      if (!modes[mode]) {
+        appendMessage("[The dolphin tilts its head, confused by the current.]", "bot");
+        input.value = "";
+        return;
+      }
+
+      if (!branchState) {
+        const patternReply = getPatternResponse(userText, mode);
+        const fallback = modes[mode][Math.floor(Math.random() * modes[mode].length)];
+        const botResponse = patternReply || fallback;
+
+        showTypingIndicator();
+        setTimeout(() => { hideTypingIndicator(); appendMessage(botResponse, "bot"); }, 1100);
+      }
+      input.value = "";
+    }
+
+    // Wire up controls (click + Enter)
+    document.getElementById("sendBtn").addEventListener("click", sendMessage);
+    document.getElementById("userInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
 </body>
 </html>
 
