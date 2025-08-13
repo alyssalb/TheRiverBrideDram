@@ -4,16 +4,83 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The River Bride Dramaturgy</title>
+  
   <link rel="stylesheet" href="style.css" />
+ 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+
+  <style>
+    :root {
+      --card-bg: #ffffff;
+      --card-border: #e3e3e3;
+      --btn-bg: #f6f6f6;
+      --btn-border: #cfcfcf;
+      --maxw: 1100px;
+      --radius: 12px;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #f8fcff;
+      font-family: Georgia, serif;
+      color: #1d2a2a;
+    }
+    header nav ul {
+      list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .75rem;
+    }
+    header nav a { text-decoration: none; }
+
+    .container { max-width: var(--maxw); margin: 2rem auto; padding: 0 1rem; }
+    .hero {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.2rem 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    }
+    .hero h1 { margin: 0 0 .4rem; font-weight: 600; }
+    .hero p  { margin: 0 0 1rem; color: #4d5a5a; }
+
+    .btn {
+      display: inline-block;
+      padding: .6rem .9rem;
+      border-radius: 10px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    .sketch-section { margin-top: 1rem; }
+    .sketch-toolbar { display: flex; gap: .6rem; align-items: center; margin: .5rem 0; }
+    #sketchWrap {
+      position: relative;
+      width: 100%;
+      height: 70vh;                /* adjust inline height as desired */
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+    #sketchMount, canvas { width: 100%; height: 100%; display: block; }
+   
+    :fullscreen #sketchWrap,
+    #sketchWrap:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+   </style>
 </head>
+
 <body>
-  <header>
+  <header class="container">
     <h1>The River Bride Dramaturgy</h1>
     <nav>
       <ul>
@@ -28,153 +95,60 @@
       </ul>
     </nav>
   </header>
-  <style>
-    :root {
-      --card-bg: #ffffff;
-      --card-border: #e3e3e3;
-      --btn-bg: #f6f6f6;
-      --btn-border: #cfcfcf;
-      --maxw: 1100px;
-      --radius: 12px;
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #f8fcff;
-      font-family: Georgia, serif;
-      color: #1d2a2a;
-    }
-    .container { max-width: var(--maxw); margin: 2rem auto; padding: 0 1rem; }
-    .hero {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 1.2rem 1.2rem 1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,.04);
-    }
-    .hero h1 { margin: 0 0 .4rem; font-weight: 600; }
-    .hero p  { margin: 0 0 1rem; color: #4d5a5a; }
-    .actions { display: flex; gap: .6rem; flex-wrap: wrap; }
-    .btn {
-      display: inline-block;
-      padding: .6rem .9rem;
-      border-radius: 10px;
-      background: var(--btn-bg);
-      border: 1px solid var(--btn-border);
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-    }
-    
-    body.running, html.running { overflow: hidden; }
-    canvas { display: block; }
+  
 
-    .exit-overlay {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 99999;
-      display: none;
-    }
-    body.running .exit-overlay { display: block; }
-  </style>
-
-  <!-- Required libraries (p5 + TF stack) -->
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
-</head>
-<body>
-  <main id="landing" class="container">
+  <main class="container">
     <section class="hero">
       <h1>Play in the River</h1>
       <p>Make ripples to learn about the river and its mysteries. This sketch uses p5.js and TensorFlow to track your hand movements using your computer's camera and let you play in the river to feel out its secrets.</p>
-      <div class="actions">
-        <button class="btn" id="startFull">Start Full-Screen</button>
-        <!-- NEW: open in a new tab with absolute URL and ?run=1 -->
-        <a class="btn" id="openTab" href="#" target="_blank" rel="noopener">Open in New Tab</a>
-      </div>
       <p style="margin-top: .8rem; font-size: .95rem; color: #6a7777">
         Tip: Allow camera access if prompted to enable hand tracking. No data or capture are recorded through this site.
       </p>
     </section>
+
+    <section class="sketch-section">
+      <div class="sketch-toolbar">
+        <button class="btn" id="fsBtn" type="button">Go Fullscreen</button>
+      </div>
+
+      <div id="sketchWrap">
+        <div id="sketchMount" aria-label="p5 sketch container"></div>
+      </div>
+    </section>
   </main>
 
-  <div class="exit-overlay">
-    <button class="btn" id="exitBtn" title="Exit the interactive">Exit x</button>
-  </div>
-
-  <script>
-    (function () {
-      const landing  = document.getElementById('landing');
-      const startBtn = document.getElementById('startFull');
-      const exitBtn  = document.getElementById('exitBtn');
-      const openTab  = document.getElementById('openTab');
-
-      // Build absolute URL for "Open in New Tab"
-      const baseUrl = location.origin + location.pathname; // current page, absolute
-      openTab.href = baseUrl + '?run=1';
-
-      let sketchLoaded = false;
-
-      function loadSketch() {
-        if (sketchLoaded) return;
-        sketchLoaded = true;
-
-        if (!window.p5) {
-          console.error('[Play in the River] p5 is not loaded. Check CDN.');
-        }
-
-        const s = document.createElement('script');
-        s.src = 'sketch.js';
-        s.async = true;
-
-        s.onload = () => {
-          console.log('[Play in the River] sketch.js loaded.');
-        };
-        s.onerror = () => {
-          sketchLoaded = false;
-          alert('Could not load sketch.js. Check the file path and network.');
-          console.error('[Play in the River] Failed to load sketch.js');
-          // Show landing again so user isn’t stuck
-          landing.style.display = '';
-          document.body.classList.remove('running');
-          document.documentElement.classList.remove('running');
-        };
-
-        document.body.appendChild(s);
-      }
-
-      function startRun() {
-        console.log('[Play in the River] Starting…');
-        document.body.classList.add('running');
-        document.documentElement.classList.add('running');
-        if (landing) landing.style.display = 'none';
-        loadSketch();
-      }
-
-      function exitRun() {
-        // Clean reset back to landing (no query string)
-        window.location.href = location.pathname;
-      }
-
-      startBtn && startBtn.addEventListener('click', startRun);
-      exitBtn  && exitBtn.addEventListener('click', exitRun);
-
-      // Auto-start if opened with ?run=1 (works in same tab or new tab)
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('run') === '1') {
-        startRun();
-      }
-    })();
-  </script>
-
-  <footer>
+  <footer class="container">
     <p>&copy; 2025 River Bride Dramaturgy Packet, Alyssa Barrack</p>
   </footer>
+  
+<script>
+  (function () {
+    const btn = document.getElementByID('fsBtn');
+    const wrap = document.getElementByID('sketchWrap');
+
+    function isFS() { return document.fullscreenElement === wrap; }
+
+    btn.addEventListener('click', async () => {
+      try {
+        if (!isfs()) {
+          await wrap.requestFullscreen();
+          btn.textContent = 'Exit Fullscreen';
+        } else {
+          await document.exitFullscreen();
+          btn.textContent = 'Go Fullscreen';
+        }
+      } catch (e) {
+        console.error('[River] Fullscreen error:', e);
+      }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      btn.textContent = isFS() ? 'Exit Fullscreen' : 'Go Fullscreen';
+    });
+  })();
+</script>
+
+  <script src="sketch.js"></script>
 </body>
 </html>
+  
