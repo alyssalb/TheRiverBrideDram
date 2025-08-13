@@ -11,15 +11,52 @@ let riverMask = [];
 let lastRippleTime = 0;
 let rippleCooldown = 800;
 
-let phrases = [
+const PHRASE_SETTINGS = {
+  factsWeight: 0.35,
+  brideWeight: 0.25,
+  recentBuffer: 6
+};
+
+const poeticLines = [
+  "The river knows.",
   "The river remembers.",
-  "What have you left behind?",
-  "The current always returns.",
-  "Ask the dolphins, they know.",
-  "Flow bends but never breaks.",
-  "Where sky touches water, stories begin.",
-  "A name once spoken, lost downstream."
+  "What were you before?",
+  "Floods and ebbs, you know its motion.",
+  "A name once spoken, lost downstream.",
+  "Moonlight sparkles on the calm river.",
+  "The rain disrupts, the rain brings newness.",
+  "Your hand writes circles the water won't forget.",
+  "Listen. The water tells its secrets.",
+  "Branches kiss the surface, what roots lie beneath?",
+  "The channel curves, the same as your lost thoughts.",
+  "To drift is to choose.",
+  "The water takes shape in your wondering.",
+  "The river changes in the rain.",
 ];
+
+const riverFacts = [
+  "The water here carries worlds of sediment, stories ground to silt.",
+  "Take a gamble in the largest rainforest in the world.",
+  "These waters cross 8 continents, expansive.",
+  "So many species call these banks and waters home; new ones are always there to find, if one is brave enough to look.",
+  "Who lives here? Who knows the land? Who was born here?",
+  "The river supports 400 indigenous groups, and 300 indigenous languages.",
+  "Stop taking these trees, they are integral to the safety of the planet.",
+  "The rich canopy tells the story of the forest, and provides its temperature and humidity regulation.",
+  "The Amazon once flowed in the opposite direction, towards the Pacific, until the Andes rose and reversed it.",
+  "Sometimes even dolphin myths can die - global warming causes intensive droughts, harming the ecosystem and all creature that inhabit it."
+];
+
+const brideFlavor = [
+  "Promises ebb and flow, but the river always keeps them.",
+  "Sisters hear different secrets in the same water.",
+  "A veil of steam, a choice to drift.",
+  "If a stranger rose from these waters, would you know his name?",
+  "How do you treat the dolphins? They watch; they know.",
+  "Nets catch fish, sometimes more.",
+  "The current hesistates, and the current pulls.",
+  "The floods await no one."
+  ];
 
 // ----- NEW: mount sizing helper -----
 function getMountSize() {
@@ -220,6 +257,33 @@ function drawRipples() {
   ripples = ripples.filter(r => r.alpha > 0);
 }
 
+const recentPhrases = [];
+
+function pickPhrase() {
+  const r = Math.random();
+  let pool;
+  if (r < PHRASE_SETTINGS.factsWeight) {
+    pool = riverFacts;
+  } else if (r < PHRASE_SETTINGS.factsWeight + PHRASE_SETTINGS.brideWeight) {
+    pool = brideFlavor;
+  } else {
+    pool = poeticLines;
+  }
+
+  let choice = null;
+  for (let i = 0; i < 8; i++) {
+    const candidate = pool[Math.floor(Math.random() * pool.length)];
+    if (!recentPhrases.includes(candidate)) { choice = candidate; break; }
+    choice = candidate;
+  }
+
+  recentPhrases.push(choice);
+  while (recentPhrases.length > PHRASE_SETTINGS.recentBuffer) {
+    recentPhrases.shift();
+  }
+  return choice;
+}
+  
 function triggerRipple(x, y) {
   ripples.push({
     x: x,
@@ -232,7 +296,7 @@ function triggerRipple(x, y) {
       amp: random(2, 5),
       speed: random(0.05, 0.15)
     },
-    phrase: random(phrases)
+    phrase: pickPhrase()
   });
 }
 
