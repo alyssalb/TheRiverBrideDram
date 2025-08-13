@@ -1,3 +1,5 @@
+/* globals handPoseDetection, tf */
+
 let video;
 let detector;
 let hands = [];
@@ -21,13 +23,57 @@ let phrases = [
   "A name once spoken, lost downstream."
 ];
 
+// --- additions: small helpers + logs ---
+function log(...args){ console.log("[River]", ...args); }
+function warn(...args){ console.warn("[River]", ...args); }
+function err(...args){ console.error("[River]", ...args); }
+
+async function waitForVideoReady(elt, timeoutMs = 8000) {
+  const start = performance.now();
+  return new Promise((resolve, reject) => {
+    const tick = () => {
+      // 2 = HAVE_CURRENT_DATA
+      if (elt && elt.readyState >= 2) return resolve(true);
+      if (performance.now() - start > timeoutMs) {
+        return reject(new Error("Video not ready (timeout)."));
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
+}
+// --- end additions ---
+
 async function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
 
+  // your original createCapture
   video = createCapture(VIDEO);
   video.size(640, 480);
   video.hide();
+
+  // --- additions: ensure TF + video are ready before detector ---
+  try {
+    if (typeof tf !== "undefined") {
+      try { await tf.setBackend("webgl"); } catch (e) { warn("Could not set TF backend to webgl:", e); }
+      await tf.ready();
+      log("TF backend:", tf.getBackend());
+    } else {
+      warn("tf not found on window; continuing (TFJS not required for MediaPipe runtime but recommended).");
+    }
+  } catch (e) {
+    warn("TensorFlow setup issue; continuing anyway:", e);
+  }
+
+  try {
+    await waitForVideoReady(video.elt);
+    log("Video readyState:", video.elt.readyState);
+  } catch (e) {
+    err("Webcam did not become ready:", e);
+    // continue; user might grant later
+  }
+  // --- end additions ---
 
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig = {
@@ -36,7 +82,12 @@ async function setup() {
     solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands'
   };
 
-  detector = await handPoseDetection.createDetector(model, detectorConfig);
+  try {
+    detector = await handPoseDetection.createDetector(model, detectorConfig);
+    log("Detector ready.");
+  } catch (e) {
+    err("Failed to create detector:", e);
+  }
 
   handLoop();
 }
@@ -56,6 +107,22 @@ function draw() {
     ellipse(fingertipPos.x, fingertipPos.y, 20, 20);
     pop();
   }
+
+  // small camera preview (helps verify stream)
+  if (video) {
+    push();
+    image(video, 16, 16, 160, 120);
+    pop();
+  }
+
+  // status hint
+  fill(220);
+  noStroke();
+  textSize(14);
+  const status = detector
+    ? (hands.length ? "Hand detected" : "Looking for a hand…")
+    : "Loading model…";
+  text(status, 16, height - 20);
 }
 
 function drawSunsetSky() {
@@ -196,29 +263,39 @@ function drawRiverTexture() {
 }
 
 async function handLoop() {
+  // small guard: if detector isn't built yet, wait a bit
+  while (!detector) {
+    await new Promise(r => setTimeout(r, 100));
+  }
+
   while (true) {
-    if (detector && video.loadedmetadata) {
-      const results = await detector.estimateHands(video.elt, {
-        flipHorizontal: true
-      });
+    if (detector && video && video.elt && video.elt.readyState >= 2) {
+      try {
+        const results = await detector.estimateHands(video.elt, { flipHorizontal: true });
+        hands = results || [];
 
-      hands = results;
+        if (hands.length > 0) {
+          // prefer 'index_finger_tip'; fallback if not present
+          let indexTip = hands[0].keypoints?.find(k => k.name === 'index_finger_tip')
+                        || hands[0].keypoints?.[8]; // common index in some outputs
 
-      if (hands.length > 0) {
-        let indexTip = hands[0].keypoints.find(k => k.name === 'index_finger_tip');
-        if (indexTip) {
-          let x = map(indexTip.x, 0, video.width, 0, width);
-          let y = map(indexTip.y, 0, video.height, 0, height);
+          if (indexTip && Number.isFinite(indexTip.x) && Number.isFinite(indexTip.y)) {
+            let x = map(indexTip.x, 0, video.width, 0, width);
+            let y = map(indexTip.y, 0, video.height, 0, height);
 
-          fingertipPos = { x, y };
+            fingertipPos = { x, y };
 
-          if (isInRiver(x, y) && millis() - lastRippleTime > rippleCooldown) {
-            triggerRipple(x, y);
-            lastRippleTime = millis();
+            if (isInRiver(x, y) && millis() - lastRippleTime > rippleCooldown) {
+              triggerRipple(x, y);
+              lastRippleTime = millis();
+            }
           }
         }
+      } catch (e) {
+        warn("estimateHands error:", e);
       }
     }
+    // keep your ~10Hz loop
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 }
@@ -233,4 +310,3 @@ function keyPressed() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
-
