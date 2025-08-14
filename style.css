@@ -1,11 +1,9 @@
-/* Magical realism-inspired styling for The River Bride site */
-
 :root {
   --bg: #fdfaf6;
   --text: #2c2c2c;
-  --accent: #4c7153;
+  --accent: #336358;
   --highlight: #a16941;
-  --header: #395542;
+  --header: #234d4f;
   --font-serif: 'Georgia', serif;
   --font-sans: 'Helvetica Neue', sans-serif;
 }
