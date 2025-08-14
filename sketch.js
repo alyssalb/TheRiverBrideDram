@@ -9,7 +9,12 @@ let ripples = [];
 let riverMask = [];
 
 let lastRippleTime = 0;
-let rippleCooldown = 800;
+let rippleCooldown = 1800;
+
+const MOVE_THRESHOLD = 40;
+let lastTipForRipple = null;
+
+let wasInRiver = false;
 
 const PHRASE_SETTINGS = {
   factsWeight: 0.35,
@@ -360,10 +365,28 @@ async function handLoop() {
 
             fingertipPos = { x, y };
 
-            if (isInRiver(x, y) && millis() - lastRippleTime > rippleCooldown) {
-              triggerRipple(x, y);
-              lastRippleTime = millis();
-            }
+const now = millis();
+const inRiver = isInRiver(x, y);
+
+// how far has the fingertip moved since the last ripple-worthy position?
+let movedEnough = true;
+if (lastTipForRipple) {
+  const dx = x - lastTipForRipple.x;
+  const dy = y - lastTipForRipple.y;
+  movedEnough = Math.hypot(dx, dy) >= MOVE_THRESHOLD;
+}
+
+// fire when entering the river OR after sufficient motion, and only after cooldown
+const entering = inRiver && !wasInRiver;
+if (inRiver && (entering || movedEnough) && (now - lastRippleTime > rippleCooldown)) {
+  triggerRipple(x, y);
+  lastRippleTime = now;
+  lastTipForRipple = { x, y };
+}
+
+// remember current state for next frame
+wasInRiver = inRiver;
+
           }
         }
       } catch (e) {
