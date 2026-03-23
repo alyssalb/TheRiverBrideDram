@@ -63,16 +63,16 @@ const brideFlavor = [
   "The floods await no one."
   ];
 
-// ----- NEW: mount sizing helper -----
+// mount sizing helper 
 function getMountSize() {
   const m = document.getElementById('sketchMount');
   if (!m) return { w: windowWidth, h: windowHeight };
   const r = m.getBoundingClientRect();
   return { w: r.width, h: r.height };
 }
-// ------------------------------------
+//
 
-// --- additions: small helpers + logs ---
+// small helpers 
 function log(...args){ console.log("[River]", ...args); }
 function warn(...args){ console.warn("[River]", ...args); }
 function err(...args){ console.error("[River]", ...args); }
@@ -81,7 +81,7 @@ async function waitForVideoReady(elt, timeoutMs = 8000) {
   const start = performance.now();
   return new Promise((resolve, reject) => {
     const tick = () => {
-      // 2 = HAVE_CURRENT_DATA
+      // 
       if (elt && elt.readyState >= 2) return resolve(true);
       if (performance.now() - start > timeoutMs) {
         return reject(new Error("Video not ready (timeout)."));
@@ -91,22 +91,22 @@ async function waitForVideoReady(elt, timeoutMs = 8000) {
     tick();
   });
 }
-// --- end additions ---
+// 
 
 async function setup() {
-  // ----- CHANGED: create canvas sized to #sketchMount and mount it -----
+  // create canvas sized to #sketchMount and mount it 
   const { w, h } = getMountSize();
   const c = createCanvas(w, h);
   c.parent('sketchMount');
-  // ---------------------------------------------------------------------
+  // 
   noStroke();
 
-  // your original createCapture
+  //  createCapture
   video = createCapture(VIDEO);
   video.size(640, 480);
   video.hide();
 
-  // --- additions: ensure TF + video are ready before detector ---
+  // ensure TF + video are ready before detector
   try {
     if (typeof tf !== "undefined") {
       try { await tf.setBackend("webgl"); } catch (e) { warn("Could not set TF backend to webgl:", e); }
@@ -124,9 +124,9 @@ async function setup() {
     log("Video readyState:", video.elt.readyState);
   } catch (e) {
     err("Webcam did not become ready:", e);
-    // continue; user might grant later
+    // 
   }
-  // --- end additions ---
+  // 
 
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig = {
@@ -161,14 +161,14 @@ function draw() {
     pop();
   }
 
-  // small camera preview (helps verify stream)
+  // small camera preview 
   if (video) {
     push();
     image(video, 16, 16, 160, 120);
     pop();
   }
 
-  // status hint
+  // status 
   fill(220);
   noStroke();
   textSize(14);
